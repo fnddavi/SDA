@@ -1,20 +1,86 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Formulário OWASP Lab</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body>
-    <h1>Enviar Dados</h1>
-    <form id="formulario" method="POST" action="/data">
-      <label for="nome">Nome:</label>
-      <input type="text" id="nome" name="nome" required />
-      <br /><br />
-      <label for="idade">Idade:</label>
-      <input type="number" id="idade" name="idade" required />
-      <br /><br />
-      <button type="submit">Enviar</button>
-    </form>
-  </body>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório OWASP - Bem-vindo!</title>
+    <style>
+         
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        p {
+            line-height: 1.6;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo ao Laboratório de Segurança OWASP!</h1>
+        <p>Este é o ponto de partida do nosso ambiente de testes para explorar as vulnerabilidades da OWASP.</p>
+        <p>Navegue pelas seções para aprender sobre diferentes tipos de ataques e suas mitigações.</p>
+        <p>Por enquanto, estamos configurando a base. Em breve, teremos exemplos práticos de:</p>
+        <ul>
+            <li>Cross-Site Request Forgery (CSRF)</li>
+            <li>Cross-Site Scripting (XSS)</li>
+            <li>Injeção SQL (SQL Injection)</li>
+            <li>E muito mais!</li>
+        </ul>
+        <p>Fique ligado nas próximas atualizações!</p>
+        <p>Se você está vendo esta página, seu servidor Node.js com Express e TypeScript está funcionando corretamente.</p>
+
+        <h3>Simulação de Mudança de Senha (Vulnerável)</h3>
+        <p>Preencha para mudar sua senha (isso simula uma ação POST no servidor).</p>
+        <form action="/change-password-vulnerable" method="POST">
+            <label for="new_password_vulnerable">Nova Senha:</label>
+            <input type="password" id="new_password_vulnerable" name="new_password" required>
+            <button type="submit">Mudar Senha</button>
+        </form>
+        <p id="vulnerable-status" style="color: green;"></p>
+
+        <hr> <h3>Formulário de Mudança de Senha (PROTEGIDO por CSRF)</h3>
+        <p>Clique para acessar o formulário protegido e tentar o ataque novamente:</p>
+        <p><a href="/protected-form">Acessar Formulário Protegido</a></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const vulnerableStatusDiv = document.getElementById('vulnerable-status');
+            const protectedStatusDiv = document.getElementById('protected-status'); // Pode não ser usado aqui, mas útil
+
+            if (status === 'password_changed_vulnerable') {
+                vulnerableStatusDiv.textContent = 'Senha VULNERÁVEL alterada com sucesso (verifique o console do servidor)!';
+                vulnerableStatusDiv.style.color = 'green';
+            } else if (status === 'password_not_changed_vulnerable') {
+                vulnerableStatusDiv.textContent = 'Erro ao alterar senha VULNERÁVEL.';
+                vulnerableStatusDiv.style.color = 'red';
+            }
+            // A parte do protected-status está no HTML do /protected-form
+        });
+    </script>
+</body>
 </html>
