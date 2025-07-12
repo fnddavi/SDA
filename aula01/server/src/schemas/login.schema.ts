@@ -11,6 +11,10 @@ export const loginSchema = z
     password: z
       .string()
       .min(6, { message: "Senha deve ter no mínimo 6 caracteres" })
-      .max(10, { message: "Senha deve ter no máximo 10 caracteres" }),
+      .max(10, { message: "Senha deve ter no máximo 10 caracteres" })
+      .optional(),
+    role: z
+      .string()
+      .optional(),
   })
   .strict();

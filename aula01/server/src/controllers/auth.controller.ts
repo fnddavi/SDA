@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { loginSchema } from "../schemas/login.schema";
 import db from "../controllers/db";
 
-
 export async function loginController(
   req: Request,
   res: Response
@@ -20,6 +19,7 @@ export async function loginController(
       res.status(401).json({ message: "Usuário ou senha inválidos" });
     }
   } catch (error: any) {
+    console.error("Erro completo:", error); // 👈 Adicionado
     if (error.errors) {
       res.status(400).json({ errors: error.errors });
     } else {
