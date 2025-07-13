@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
 import { loginSchema } from "../schemas/login.schema";
-import db from "../controllers/db";
+import db from "./db";
+import { ZodError } from "zod";
 
 export async function loginController(
   req: Request,
   res: Response
 ): Promise<void> {
   try {
+    // Validação da entrada com Zod
     const validatedData = loginSchema.parse(req.body);
     const { username, password } = validatedData;
 
+    // Consulta ao banco com proteção contra SQL Injection
     const query = `SELECT * FROM users WHERE username = $1 AND password = $2`;
     const result = await db.query(query, [username, password]);
 
@@ -18,12 +21,15 @@ export async function loginController(
     } else {
       res.status(401).json({ message: "Usuário ou senha inválidos" });
     }
-  } catch (error: any) {
-    console.error("Erro completo:", error); // 👈 Adicionado
-    if (error.errors) {
-      res.status(400).json({ errors: error.errors });
-    } else {
-      res.status(500).json({ message: "Erro interno no servidor" });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      // Retorna erros do Zod no formato esperado
+      res.status(400).json({ errors: error
+      });
     }
+
+    // Erro inesperado
+    console.error("Erro inesperado:", error);
+    res.status(500).json({ message: "Erro interno no servidor" });
   }
 }
