@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>Stored XSS</title>
+    <meta charset="UTF-8" />
+    <script>
+      function enviarComentario(sanitize) {
+        const comment = document.getElementById("comentario-entrada").value;
+        const url = sanitize ? "/comment-sanitize" : "/comment";
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Indica que estamos enviando JSON
+          },
+          body: JSON.stringify({ comment }), // Converte o objeto JavaScript para JSON
+        })
+          .then((res) => res.json()) // retorna JSON
+          .then((data) => {
+            document.getElementById("comentario-resposta").innerText =
+              data.message;
+          })
+          .catch((error) => {
+            document.getElementById("comentario-resposta").innerText = error;
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <h3>Stored XSS</h3>
+
+    <div>
+      <label>Postar comentário</label>
+      <input id="comentario-entrada" />
+      <div>
+        <button onclick="enviarComentario(false)">
+          Postar comentário
+        </button>
+        <button onclick="enviarComentario(true)">
+          Postar comentário sanitizado
+        </button>
+      </div>
+      <div>Resposta: <span id="comentario-resposta"></span></div>
+    </div>
+    
+    <div>
+      <a href="/comments">Acessar a página de comentários</a>
+    </div>
+    <div>
+      <a href="/comments-sanitize">Acessar a página de comentários sanitizados</a>
+    </div>
+  </body>
+</html>

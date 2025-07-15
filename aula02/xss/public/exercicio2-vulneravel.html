@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exercício 2 - vulnerável</title>
+    <script>
+      // Simula um cookie de autenticação
+      document.cookie = "token=exer02cliente; path=/";
+
+      async function carregarPerfil() {
+        const res = await fetch("/exercicio2");
+        const perfis = await res.json();
+
+        const container = document.getElementById("containerPerfis");
+        container.innerHTML = ""; // limpa os perfis anteriores
+
+        for (const perfil of perfis) {
+          const div = document.createElement("div");
+
+          const nome = document.createElement("p");
+          nome.innerHTML = `<strong>Nome:</strong> ${perfil.name}`;
+
+          const descricao = document.createElement("p");
+          descricao.innerHTML = `<strong>Descrição:</strong> ${perfil.description}`; // Vulnerável
+
+          div.appendChild(nome);
+          div.appendChild(descricao);
+          div.appendChild(document.createElement("hr"));
+
+          container.appendChild(div);
+        }
+      }
+
+      async function salvarPerfil() {
+        const name = document.getElementById("inputNome").value;
+        const description = document.getElementById("inputDescricao").value;
+
+        await fetch("/exercicio2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, description }),
+        });
+
+        carregarPerfil();
+      }
+
+      window.onload = carregarPerfil;
+    </script>
+  </head>
+  <body>
+    <h3>Atualizar Perfil</h3>
+    <label>Nome: <input type="text" id="inputNome" /></label><br />
+    <label>Descrição: <textarea id="inputDescricao"></textarea></label><br />
+    <button onclick="salvarPerfil()">Salvar</button>
+
+    <h3>Visualização dos Perfis</h3>
+    <div id="containerPerfis"></div>
+  </body>
+</html>

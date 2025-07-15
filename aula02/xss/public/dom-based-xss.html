@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DOM-based XSS</title>
+  </head>
+  <body>
+    <h3>Resultados da busca:</h3>
+    <div id="resultado"></div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get("q");
+
+      // Inserção direta do parâmetro no DOM sem sanitização
+      document.getElementById(
+        "resultado"
+      ).innerHTML = `Você pesquisou por: ${query}`;
+    </script>
+  </body>
+</html>

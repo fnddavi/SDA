@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exercício 1 - vulnerável</title>
+    <script>
+      // Simula um cookie de autenticação
+      document.cookie = "token=exer01cliente; path=/";
+
+      // DOM-based XSS: insere diretamente no DOM o conteúdo da query string
+      window.onload = function () {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get("q");
+
+        // Vulnerabilidade: inserção direta sem sanitização
+        document.getElementById("resultado").innerHTML = q;
+      };
+    </script>
+  </head>
+  <body>
+    <h3>Resultados da busca:</h3>
+    <div id="resultado"></div>
+  </body>
+</html>
