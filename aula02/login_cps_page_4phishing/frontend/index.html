@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <header id="header">
+      <img src="img/CPS_LogotipoMinimoNegativo.png" alt="Logo CPS" />
+    </header>
+
+    <center>
+      <table
+        cellpadding="0"
+        cellspacing="0"
+        width="900"
+        style="margin-top: 90px"
+      >
+        <tr>
+          <td width="500" align="left" valign="top">
+            <form id="login-form">
+              <table cellpadding="6" cellspacing="0">
+                <tr>
+                  <td class="form-label">Usuário</td>
+                  <td>
+                    <input type="text" name="username" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="form-label" style="padding-bottom: 22px">Senha</td>
+                  <td style="padding-bottom: 22px">
+                    <input type="password" name="password" />
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <button class="btn-entrar" type="submit">Entrar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <a href="#" class="link-ajuda"
+                      >Soluções para problemas no Acesso</a
+                    >
+                  </td>
+                </tr>
+              </table>
+            </form>
+          </td>
+          <td width="100" align="center" valign="top">
+            <div class="tentativas-box">
+              <div class="numero">5</div>
+              <small>tentativas</small>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </center>
+
+    <script src="script.js"></script>
+  </body>
+</html>
