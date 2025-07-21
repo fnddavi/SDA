@@ -33,7 +33,6 @@ app.listen(PORT, function () {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
-
 // ****** ROTAS PARA PÁGINAS HTML ESTÁTICAS ******
 app.get("/stored-xss", (_: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "stored-xss.html"));
@@ -44,33 +43,46 @@ app.get("/dom-xss", (_: Request, res: Response) => {
 });
 
 app.get("/dom-xss-sanitize", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "dom-based-xss-sanitize.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "dom-based-xss-sanitize.html")
+  );
 });
 
 app.get("/exercicio1-vulneravel", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio1-vulneravel.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio1-vulneravel.html")
+  );
 });
 
 app.get("/exercicio1-resposta", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio1-resposta.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio1-resposta.html")
+  );
 });
 
 app.get("/exercicio2-vulneravel", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio2-vulneravel.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio2-vulneravel.html")
+  );
 });
 
 app.get("/exercicio2-resposta", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio2-resposta.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio2-resposta.html")
+  );
 });
 
 app.get("/exercicio3-resposta", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio3-resposta.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio3-resposta.html")
+  );
 });
 
 app.get("/exercicio4-vulneravel", (_: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "..", "public", "exercicio4-vulneravel.html"));
+  res.sendFile(
+    path.join(__dirname, "..", "public", "exercicio4-vulneravel.html")
+  );
 });
-
 
 // ****** STORED XSS ******
 
@@ -98,7 +110,9 @@ app.post("/comment-sanitize", (req: Request, res: Response) => {
     allowedAttributes: {},
   });
 
-  db.query("INSERT INTO comments_sanitize (text) VALUES ($1)", [sanitizedComment]);
+  db.query("INSERT INTO comments_sanitize (text) VALUES ($1)", [
+    sanitizedComment,
+  ]);
   res.json({ message: "Comentário adicionado com segurança!" });
 });
 
@@ -108,7 +122,6 @@ app.get("/comments-sanitize", async (req: Request, res: Response) => {
   res.header("Content-Type", "text/html");
   res.send(result.rows.map((row) => `<div>${row.text}</div>`).join(""));
 });
-
 
 // ****** REFLECTED XSS ******
 
@@ -144,7 +157,6 @@ app.get("/search-sanitize", (req: Request, res: Response) => {
   `);
 });
 
-
 // EXERCÍCIO 1 – Rota para simular o recebimento de um cookie roubado
 app.get("/exercicio1-server", (req: Request, res: Response) => {
   const response = req.query.c as string;
@@ -156,7 +168,10 @@ app.get("/exercicio1-server", (req: Request, res: Response) => {
 // Rota para inserir dados no banco sem sanitização
 app.post("/exercicio2", (req: Request, res: Response) => {
   const { name, description } = req.body;
-  db.query("INSERT INTO profiles (name, description) VALUES ($1, $2)", [name, description]);
+  db.query("INSERT INTO profiles (name, description) VALUES ($1, $2)", [
+    name,
+    description,
+  ]);
   res.json({ message: "Perfil criado!" });
 });
 
@@ -169,10 +184,10 @@ app.get("/exercicio2", async (req: Request, res: Response) => {
 // EXERCÍCIO 3 – Simulação de envio de cookie HttpOnly (inalcançável via JavaScript)
 app.get("/exercicio3-login", (req: Request, res: Response) => {
   res.cookie("exer03", "exer03servidor", {
-    httpOnly: true,        // Inacessível via JavaScript
+    httpOnly: true, // Inacessível via JavaScript
     path: "/",
-    sameSite: "strict",    // Impede envio entre sites diferentes
-    secure: false          // Deve ser true em produção com HTTPS
+    sameSite: "strict", // Impede envio entre sites diferentes
+    secure: false, // Deve ser true em produção com HTTPS
   });
   res.send({ mensagem: "Cookie HttpOnly enviado com sucesso." });
 });
