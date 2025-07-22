@@ -22,39 +22,19 @@
       const form = document.getElementById("form-change-password");
       const status = document.getElementById("status");
 
-      // Função para obter o token CSRF do cookie
-      function getCsrfToken() {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-          const [name, value] = cookie.trim().split('=');
-          if (name === 'XSRF-TOKEN') {
-            return decodeURIComponent(value);
-          }
-        }
-        return null;
-      }
-
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const currentPassword = document.getElementById("currentPassword").value;
         const password = document.getElementById("password").value;
-        const csrfToken = getCsrfToken();
 
-        if (!csrfToken) {
-          status.textContent = "Token CSRF não encontrado. Faça login novamente.";
-          status.style.color = "red";
-          return;
-        }
-
-        const response = await fetch("/change-password", {
+        const response = await fetch("/change-password-exer03", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "x-csrf-token": csrfToken  // Enviando token no cabeçalho
+            "Content-Type": "application/json"
           },
           credentials: "include", // para enviar o cookie
-          body: JSON.stringify({ password })
+          body: JSON.stringify({ currentPassword, password })
         });
 
         const data = await response.json();

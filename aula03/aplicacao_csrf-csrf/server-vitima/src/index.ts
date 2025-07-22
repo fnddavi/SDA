@@ -31,18 +31,7 @@ app.use(cors({
 // Middleware para servir arquivos estáticos a partir do diretório "public"
 app.use(express.static("public"));
 
-// Inicializa o servidor na porta definida
-// Edite o arquivo hosts no seu sistema operacional:
-// C:\Windows\System32\drivers\etc\hosts
-// Adicione as linhas:
-// 127.0.0.1   vitima.local
-// 127.0.0.1   atacante.local
-// Isso permitirá acessar o servidor via http://vitima.local:3001
-app.listen(PORT, function () {
-  console.log(`Servidor rodando em http://vitima.local:${PORT}`);
-});
-
-// ****** ROTA PARA PÁGINA HTML ESTÁTICA ******
+// ****** ROTAS PARA PÁGINAS HTML ESTÁTICAS ******
 app.get("/", (_: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "login.html"));
 });
@@ -57,8 +46,21 @@ app.get("/csrf-demo", (_: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "csrf-demo.html"));
 });
 
+// Usa as rotas definidas no arquivo routes/index.ts
 app.use("/", router);
 
+// Middleware de erro 404 - deve vir DEPOIS de todas as rotas
 app.use(function (_: Request, res: Response) {
   res.status(404).json({error: "Rota não encontrada"});
+});
+
+// Inicializa o servidor na porta definida
+// Edite o arquivo hosts no seu sistema operacional:
+// C:\Windows\System32\drivers\etc\hosts
+// Adicione as linhas:
+// 127.0.0.1   vitima.local
+// 127.0.0.1   atacante.local
+// Isso permitirá acessar o servidor via http://vitima.local:3001
+app.listen(PORT, function () {
+  console.log(`Servidor rodando em http://vitima.local:${PORT}`);
 });

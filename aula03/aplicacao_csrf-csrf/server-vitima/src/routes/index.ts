@@ -7,12 +7,12 @@ const router = express.Router();
 
 // Instância do csrf-csrf para geração de token
 const { generateToken, doubleCsrfProtection } = doubleCsrf({
-  getSecret: () => "super-secret-key", // Em produção use uma chave secreta forte
+  getSecret: () => process.env.CSRF_SECRET || "super-secret-key", // Em produção use uma chave secreta forte
   cookieName: "XSRF-TOKEN",
   cookieOptions: {
-    httpOnly: false, // Permitir acesso via JavaScript para o padrão Double Submit Cookie
+    httpOnly: false, // IMPORTANTE: false para permitir acesso via JavaScript (Double Submit Cookie)
     sameSite: "lax",
-    secure: false // true em produção
+    secure: false // true em produção com HTTPS
   }
 });
 
@@ -41,10 +41,10 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-// Rota vulnerável a CSRF
-// http://atacante.local:3002/csrf-get-attack
-router.get("/contact", async (req: Request, res: Response) => {
-  const { name, phone } = req.query;
+// Rota agora PROTEGIDA contra CSRF usando csrf-csrf
+// http://atacante.local:3002/csrf-get-attack (será bloqueado)
+router.post("/contact", doubleCsrfProtection, async (req: Request, res: Response) => {
+  const { name, phone } = req.body;
   const user = req.cookies.user;
 
   if (!user) {

@@ -2,48 +2,146 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Demonstração CSRF Double Submit Cookie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demonstração CSRF - Double Submit Cookie</title>
     <style>
-      body { font-family: Arial, sans-serif; margin: 20px; }
-      .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
-      .success { color: green; }
-      .error { color: red; }
-      .info { color: blue; }
-      button { margin: 5px; padding: 10px; }
+      body { 
+        font-family: Arial, sans-serif; 
+        margin: 20px; 
+        background-color: #f5f5f5; 
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .section { 
+        margin: 20px 0; 
+        padding: 15px; 
+        border: 1px solid #ddd; 
+        border-radius: 5px;
+        background: #fafafa;
+      }
+      .success { color: #28a745; font-weight: bold; }
+      .error { color: #dc3545; font-weight: bold; }
+      .info { color: #17a2b8; }
+      .warning { color: #ffc107; }
+      button { 
+        margin: 5px; 
+        padding: 10px 15px; 
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .btn-primary { background: #007bff; color: white; }
+      .btn-success { background: #28a745; color: white; }
+      .btn-warning { background: #ffc107; color: black; }
+      .btn-danger { background: #dc3545; color: white; }
+      input[type="text"], input[type="password"] {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 200px;
+      }
+      .token-display {
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+        word-break: break-all;
+        margin: 10px 0;
+      }
+      .step-number {
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      h2 { 
+        display: flex; 
+        align-items: center;
+        color: #333;
+      }
     </style>
   </head>
   <body>
-    <h1>Demonstração: Proteção CSRF com Double Submit Cookie</h1>
-    
-    <div class="section">
-      <h2>1. Login (Obter Token CSRF)</h2>
-      <form id="login-form">
-        <label>Usuário: <input type="text" id="username" value="ana" /></label><br><br>
-        <label>Senha: <input type="password" id="password" value="123" /></label><br><br>
-        <button type="submit">Login</button>
-      </form>
-      <div id="login-status"></div>
-    </div>
+    <div class="container">
+      <h1>🔒 Demonstração: Proteção CSRF com Double Submit Cookie</h1>
+      <p><strong>Biblioteca:</strong> <code>csrf-csrf</code> | <strong>Padrão:</strong> Double Submit Cookie</p>
+      
+      <div class="section">
+        <h2><span class="step-number">1</span>Login (Gerar Tokens CSRF)</h2>
+        <p>O servidor gera um token CSRF e o envia de <strong>duas formas</strong>:</p>
+        <ul>
+          <li>🍪 Como cookie <code>XSRF-TOKEN</code> (acessível via JavaScript)</li>
+          <li>📄 Como token visível na resposta JSON</li>
+        </ul>
+        <form id="login-form">
+          <label>Usuário: <input type="text" id="username" value="ana" /></label><br><br>
+          <label>Senha: <input type="password" id="password" value="123" /></label><br><br>
+          <button type="submit" class="btn-primary">🚀 Fazer Login</button>
+        </form>
+        <div id="login-status"></div>
+      </div>
 
-    <div class="section">
-      <h2>2. Estado Atual dos Tokens</h2>
-      <button onclick="checkTokens()">Verificar Tokens</button>
-      <div id="token-status"></div>
-    </div>
+      <div class="section">
+        <h2><span class="step-number">2</span>Estado Atual dos Tokens CSRF</h2>
+        <p>Verificar se os tokens foram criados corretamente:</p>
+        <button onclick="checkTokens()" class="btn-success">🔍 Verificar Tokens</button>
+        <div id="token-status"></div>
+      </div>
 
-    <div class="section">
-      <h2>3. Alterar Senha (COM Proteção CSRF)</h2>
-      <form id="change-password-form">
-        <label>Nova Senha: <input type="password" id="new-password" value="novaSenha123" /></label><br><br>
-        <button type="submit">Alterar Senha</button>
-      </form>
-      <div id="change-status"></div>
-    </div>
+      <div class="section">
+        <h2><span class="step-number">3</span>Alterar Senha (COM Proteção CSRF)</h2>
+        <p>O cliente envia o token no cabeçalho <code>x-csrf-token</code>:</p>
+        <form id="change-password-form">
+          <label>Nova Senha: <input type="password" id="new-password" value="novaSenha123" /></label><br><br>
+          <button type="submit" class="btn-success">🔐 Alterar Senha (Protegido)</button>
+        </form>
+        <div id="change-status"></div>
+      </div>
 
-    <div class="section">
-      <h2>4. Teste de Ataque (SEM Token CSRF)</h2>
-      <button onclick="testAttack()">Simular Ataque CSRF</button>
-      <div id="attack-status"></div>
+      <div class="section">
+        <h2><span class="step-number">4</span>Adicionar Contato (COM Proteção CSRF)</h2>
+        <p>Testar a rota <code>/contact</code> agora protegida:</p>
+        <form id="contact-form">
+          <label>Nome: <input type="text" id="contact-name" value="João Silva" /></label><br>
+          <label>Telefone: <input type="text" id="contact-phone" value="11999887766" /></label><br><br>
+          <button type="submit" class="btn-success">📱 Adicionar Contato (Protegido)</button>
+        </form>
+        <div id="contact-status"></div>
+      </div>
+
+      <div class="section">
+        <h2><span class="step-number">5</span>Teste de Ataque CSRF</h2>
+        <p>Simular ataque <strong>sem</strong> enviar o token CSRF:</p>
+        <button onclick="testAttackPassword()" class="btn-danger">⚠️ Atacar Mudança de Senha</button>
+        <button onclick="testAttackContact()" class="btn-danger">⚠️ Atacar Adição de Contato</button>
+        <div id="attack-status"></div>
+      </div>
+
+      <div class="section">
+        <h2>📚 Como Funciona o Double Submit Cookie</h2>
+        <ol>
+          <li><strong>Servidor gera token:</strong> Cria um token único e seguro</li>
+          <li><strong>Envia de duas formas:</strong> Cookie + JSON/HTML</li>
+          <li><strong>Cliente armazena:</strong> Token disponível via JavaScript</li>
+          <li><strong>Cliente envia:</strong> Token no cabeçalho <code>x-csrf-token</code></li>
+          <li><strong>Servidor valida:</strong> Compara cookie com cabeçalho</li>
+          <li><strong>Resultado:</strong> Aceita se forem iguais, rejeita se diferentes</li>
+        </ol>
+      </div>
     </div>
 
     <script>
@@ -66,16 +164,22 @@
         
         if (csrfToken) {
           tokenStatus.innerHTML = `
-            <p class="success">✓ Cookie XSRF-TOKEN encontrado</p>
-            <p class="info">Token: ${csrfToken}</p>
-            <p class="info">Este token será enviado no cabeçalho x-csrf-token</p>
+            <div class="success">✅ Cookie XSRF-TOKEN encontrado!</div>
+            <div class="token-display">
+              <strong>Token:</strong> ${csrfToken}
+            </div>
+            <div class="info">
+              ✓ Este token será enviado no cabeçalho <code>x-csrf-token</code><br>
+              ✓ O servidor comparará com o valor do cookie<br>
+              ✓ Se forem iguais, a requisição será aceita
+            </div>
           `;
         } else {
-          tokenStatus.innerHTML = '<p class="error">✗ Token CSRF não encontrado. Faça login primeiro.</p>';
+          tokenStatus.innerHTML = '<div class="error">❌ Token CSRF não encontrado. Faça login primeiro.</div>';
         }
       }
 
-      // Login
+      // 1. LOGIN - Gerar tokens CSRF
       document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -87,7 +191,7 @@
           const response = await fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            credentials: 'include', // IMPORTANTE: Para cookies
             body: JSON.stringify({ username, password })
           });
 
@@ -95,20 +199,22 @@
           
           if (response.ok) {
             status.innerHTML = `
-              <p class="success">${data.message}</p>
-              <p class="info">Token CSRF gerado: ${data.csrfToken}</p>
-              <p class="info">Cookie XSRF-TOKEN criado automaticamente</p>
+              <div class="success">✅ ${data.message}</div>
+              <div class="info">
+                🍪 <strong>Cookie criado:</strong> XSRF-TOKEN<br>
+                📄 <strong>Token JSON:</strong> ${data.csrfToken}
+              </div>
             `;
             checkTokens(); // Atualiza status dos tokens
           } else {
-            status.innerHTML = `<p class="error">${data.error}</p>`;
+            status.innerHTML = `<div class="error">❌ ${data.error}</div>`;
           }
         } catch (err) {
-          status.innerHTML = `<p class="error">Erro na requisição: ${err.message}</p>`;
+          status.innerHTML = `<div class="error">❌ Erro na requisição: ${err.message}</div>`;
         }
       });
 
-      // Alterar senha COM proteção CSRF
+      // 3. ALTERAR SENHA - Com proteção CSRF
       document.getElementById('change-password-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -117,7 +223,7 @@
         const status = document.getElementById('change-status');
 
         if (!csrfToken) {
-          status.innerHTML = '<p class="error">Token CSRF não encontrado. Faça login primeiro.</p>';
+          status.innerHTML = '<div class="error">❌ Token CSRF não encontrado. Faça login primeiro.</div>';
           return;
         }
 
@@ -126,7 +232,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-csrf-token': csrfToken  // PADRÃO DOUBLE SUBMIT COOKIE
+              'x-csrf-token': csrfToken  // 🔑 PADRÃO DOUBLE SUBMIT COOKIE
             },
             credentials: 'include',
             body: JSON.stringify({ password })
@@ -136,20 +242,66 @@
           
           if (response.ok) {
             status.innerHTML = `
-              <p class="success">${data.message}</p>
-              <p class="info">✓ Token CSRF validado com sucesso!</p>
-              <p class="info">Cookie e cabeçalho coincidiram</p>
+              <div class="success">✅ ${data.message}</div>
+              <div class="info">
+                🔒 Token CSRF validado com sucesso!<br>
+                ✓ Cookie e cabeçalho coincidiram<br>
+                ✓ Requisição autorizada pelo servidor
+              </div>
             `;
           } else {
-            status.innerHTML = `<p class="error">${data.error}</p>`;
+            status.innerHTML = `<div class="error">❌ ${data.error}</div>`;
           }
         } catch (err) {
-          status.innerHTML = `<p class="error">Erro na requisição: ${err.message}</p>`;
+          status.innerHTML = `<div class="error">❌ Erro na requisição: ${err.message}</div>`;
         }
       });
 
-      // Simular ataque CSRF (sem token)
-      async function testAttack() {
+      // 4. ADICIONAR CONTATO - Com proteção CSRF
+      document.getElementById('contact-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('contact-name').value;
+        const phone = document.getElementById('contact-phone').value;
+        const csrfToken = getCsrfToken();
+        const status = document.getElementById('contact-status');
+
+        if (!csrfToken) {
+          status.innerHTML = '<div class="error">❌ Token CSRF não encontrado. Faça login primeiro.</div>';
+          return;
+        }
+
+        try {
+          const response = await fetch('/contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-csrf-token': csrfToken  // 🔑 PADRÃO DOUBLE SUBMIT COOKIE
+            },
+            credentials: 'include',
+            body: JSON.stringify({ name, phone })
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            status.innerHTML = `
+              <div class="success">✅ ${data.message}</div>
+              <div class="info">
+                📱 Contato adicionado: ${name} - ${phone}<br>
+                🔒 Proteção CSRF funcionando!
+              </div>
+            `;
+          } else {
+            status.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+          }
+        } catch (err) {
+          status.innerHTML = `<div class="error">❌ Erro na requisição: ${err.message}</div>`;
+        }
+      });
+
+      // 5. SIMULAR ATAQUES CSRF (sem token)
+      async function testAttackPassword() {
         const status = document.getElementById('attack-status');
         
         try {
@@ -157,23 +309,57 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ password: 'senhaDoAtacante' })
-            // NOTA: Sem o cabeçalho x-csrf-token
+            body: JSON.stringify({ password: 'senhaDoAtacante123' })
+            // ⚠️ NOTA: SEM o cabeçalho x-csrf-token
           });
 
           const data = await response.json();
           
           if (response.ok) {
-            status.innerHTML = `<p class="error">⚠️ FALHA DE SEGURANÇA: Ataque bem-sucedido!</p>`;
+            status.innerHTML = `<div class="error">🚨 FALHA DE SEGURANÇA: Ataque bem-sucedido!</div>`;
           } else {
             status.innerHTML = `
-              <p class="success">✓ Ataque bloqueado com sucesso!</p>
-              <p class="info">Erro: ${data.error}</p>
-              <p class="info">Motivo: Token CSRF não fornecido no cabeçalho</p>
+              <div class="success">✅ Ataque de senha bloqueado!</div>
+              <div class="info">
+                🛡️ <strong>Motivo:</strong> ${data.error}<br>
+                🔒 Token CSRF não fornecido no cabeçalho<br>
+                ✓ Proteção csrf-csrf funcionando!
+              </div>
             `;
           }
         } catch (err) {
-          status.innerHTML = `<p class="error">Erro na requisição: ${err.message}</p>`;
+          status.innerHTML = `<div class="error">❌ Erro na requisição: ${err.message}</div>`;
+        }
+      }
+
+      async function testAttackContact() {
+        const status = document.getElementById('attack-status');
+        
+        try {
+          const response = await fetch('/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ name: 'Atacante', phone: '666666666' })
+            // ⚠️ NOTA: SEM o cabeçalho x-csrf-token
+          });
+
+          const data = await response.json();
+          
+          if (response.ok) {
+            status.innerHTML = `<div class="error">🚨 FALHA DE SEGURANÇA: Ataque bem-sucedido!</div>`;
+          } else {
+            status.innerHTML = `
+              <div class="success">✅ Ataque de contato bloqueado!</div>
+              <div class="info">
+                🛡️ <strong>Motivo:</strong> ${data.error}<br>
+                🔒 Token CSRF não fornecido no cabeçalho<br>
+                ✓ Proteção csrf-csrf funcionando!
+              </div>
+            `;
+          }
+        } catch (err) {
+          status.innerHTML = `<div class="error">❌ Erro na requisição: ${err.message}</div>`;
         }
       }
 
