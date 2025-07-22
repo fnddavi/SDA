@@ -10,7 +10,7 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
   getSecret: () => "super-secret-key", // Em produção use uma chave secreta forte
   cookieName: "XSRF-TOKEN",
   cookieOptions: {
-    httpOnly: true,
+    httpOnly: false, // Permitir acesso via JavaScript para o padrão Double Submit Cookie
     sameSite: "lax",
     secure: false // true em produção
   }

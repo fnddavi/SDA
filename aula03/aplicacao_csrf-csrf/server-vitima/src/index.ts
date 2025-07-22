@@ -52,6 +52,11 @@ app.get("/change-pwd", (_: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "..", "public", "change-pwd.html"));
 });
 
+// Demonstração completa do Double Submit Cookie
+app.get("/csrf-demo", (_: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "..", "public", "csrf-demo.html"));
+});
+
 app.use("/", router);
 
 app.use(function (_: Request, res: Response) {
