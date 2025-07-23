@@ -5,16 +5,23 @@ import db from "./db";
 
 const router = express.Router();
 
-// Instância do csrf-csrf para geração de token
-const { generateToken, doubleCsrfProtection } = doubleCsrf({
+// Configuração do csrf-csrf para geração de token
+const doubleCsrfUtilities = doubleCsrf({
   getSecret: () => process.env.CSRF_SECRET || "super-secret-key", // Em produção use uma chave secreta forte
   cookieName: "XSRF-TOKEN",
   cookieOptions: {
     httpOnly: false, // IMPORTANTE: false para permitir acesso via JavaScript (Double Submit Cookie)
     sameSite: "lax",
     secure: false // true em produção com HTTPS
+  },
+  getSessionIdentifier: (req: Request) => {
+    // Função obrigatória na versão 4.0.3 - identifica a sessão do usuário
+    return req.cookies?.user || "anonymous";
   }
 });
+
+// Extrair as funções do objeto retornado (nome correto na versão 4.0.3)
+const { generateCsrfToken, doubleCsrfProtection } = doubleCsrfUtilities;
 
 // Simula login e define cookie de autenticação
 router.post("/login", async (req: Request, res: Response) => {
@@ -33,7 +40,7 @@ router.post("/login", async (req: Request, res: Response) => {
     });
 
     // Gerando token CSRF
-    const csrfToken = generateToken(req, res);
+    const csrfToken = generateCsrfToken(req, res);
     // Enviando o token também no JSON
     res.json({ message: "Login efetuado com sucesso!", csrfToken });
   } else {
