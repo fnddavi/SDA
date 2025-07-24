@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Contatos Seguros</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .contact-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Sistema de Contatos Seguros</h1>
+            <p>Gerencie seus contatos com segurança e criptografia</p>
+        </div>
+
+        <div class="content">
+            <!-- Tela de Autenticação -->
+            <div id="auth-screen" class="screen active">
+                <div class="tabs">
+                    <div class="tab active" onclick="showLogin()">Login</div>
+                    <div class="tab" onclick="showRegister()">Cadastro</div>
+                </div>
+
+                <!-- Formulário de Login -->
+                <div id="login-form">
+                    <h2>Fazer Login</h2>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label for="loginEmail">Email:</label>
+                            <input type="email" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Senha:</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit">Entrar</button>
+                    </form>
+                </div>
+
+                <!-- Formulário de Registro -->
+                <div id="register-form" style="display: none;">
+                    <h2>Criar Conta</h2>
+                    <form onsubmit="handleRegister(event)">
+                        <div class="form-group">
+                            <label for="registerName">Nome Completo:</label>
+                            <input type="text" id="registerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Email:</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Senha (mínimo 8 caracteres):</label>
+                            <input type="password" id="registerPassword" required minlength="8">
+                        </div>
+                        <button type="submit">Cadastrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tela Principal -->
+            <div id="app-screen" class="screen">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Meus Contatos</h2>
+                    <button onclick="logout()" class="btn-secondary">Sair</button>
+                </div>
+
+                <!-- Formulário de Novo Contato -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3>Adicionar Novo Contato</h3>
+                    <form onsubmit="addContact(event)">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label for="contactName">Nome:</label>
+                                <input type="text" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail">Email:</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Telefone:</label>
+                                <input type="tel" id="contactPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactCompany">Empresa:</label>
+                                <input type="text" id="contactCompany">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactNotes">Observações:</label>
+                            <textarea id="contactNotes" rows="3"></textarea>
+                        </div>
+                        <button type="submit">Adicionar Contato</button>
+                    </form>
+                </div>
+
+                <!-- Lista de Contatos -->
+                <div id="contactsList">
+                    <p>Carregando contatos...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let authToken = localStorage.getItem('token');
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('App iniciada');
+            if (authToken) {
+                showAppScreen();
+                loadContacts();
+            }
+        });
+
+        // Alternar entre login e registro
+        function showLogin() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab')[0].classList.add('active');
+        }
+
+        function showRegister() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab')[1].classList.add('active');
+        }
+
+        // Registro
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            console.log('Tentando registrar usuário:', name, email);
+            showMessage('Registrando usuário...', 'success');
+            
+            try {
+                console.log('Enviando requisição para /api/auth/register');
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: email.split('@')[0],
+                        fullName: name,
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                console.log('Resposta do registro:', response.status);
+                const data = await response.json();
+                console.log('Dados do registro:', data);
+                
+                if (response.ok) {
+                    console.log('Registro bem-sucedido!');
+                    showMessage('Usuário registrado com sucesso! Faça login para continuar.', 'success');
+                    setTimeout(() => {
+                        showLogin();
+                        document.getElementById('register-form').reset();
+                    }, 2000);
+                } else {
+                    console.error('Erro no registro:', data);
+                    showMessage(data.error || 'Erro no registro', 'error');
+                }
+            } catch (error) {
+                console.error('Erro de conexão no registro:', error);
+                showMessage('Erro de conexão: ' + error.message, 'error');
+            }
+        }
+
+        // Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            console.log('Tentando fazer login com:', email);
+            showMessage('Fazendo login...', 'success');
+            
+            try {
+                console.log('Enviando requisição para /api/auth/login');
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                console.log('Resposta recebida:', response.status);
+                const data = await response.json();
+                console.log('Dados da resposta:', data);
+                
+                if (response.ok) {
+                    console.log('Login bem-sucedido!');
+                    authToken = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', authToken);
+                    showMessage('Login realizado com sucesso!', 'success');
+                    setTimeout(() => {
+                        showAppScreen();
+                        loadContacts();
+                    }, 1000);
+                    document.getElementById('login-form').reset();
+                } else {
+                    console.error('Erro no login:', data);
+                    showMessage(data.error || 'Erro no login', 'error');
+                }
+            } catch (error) {
+                console.error('Erro de conexão:', error);
+                showMessage('Erro de conexão: ' + error.message, 'error');
+            }
+        }
+
+        // Adicionar contato
+        async function addContact(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const phone = document.getElementById('contactPhone').value;
+            const company = document.getElementById('contactCompany').value;
+            const notes = document.getElementById('contactNotes').value;
+            
+            try {
+                const response = await fetch('/api/contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name, email, phone, company, notes })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Contato adicionado com sucesso!', 'success');
+                    document.querySelector('#app-screen form').reset();
+                    loadContacts();
+                } else {
+                    showMessage(data.error || 'Erro ao adicionar contato', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro de conexão', 'error');
+            }
+        }
+
+        // Carregar contatos
+        async function loadContacts() {
+            try {
+                const response = await fetch('/api/contacts', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayContacts(data.data || []);
+                } else {
+                    showMessage('Erro ao carregar contatos', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro de conexão ao carregar contatos', 'error');
+            }
+        }
+
+        // Exibir contatos
+        function displayContacts(contacts) {
+            const container = document.getElementById('contactsList');
+            
+            if (contacts.length === 0) {
+                container.innerHTML = '<p>Nenhum contato encontrado. Adicione seu primeiro contato!</p>';
+                return;
+            }
+            
+            container.innerHTML = contacts.map(contact => `
+                <div class="contact-item">
+                    <div class="contact-header">
+                        <h3>👤 ${contact.name}</h3>
+                        <small>Criado em: ${new Date(contact.created_at).toLocaleDateString('pt-BR')}</small>
+                    </div>
+                    <p><strong>📧 Email:</strong> ${contact.email}</p>
+                    <p><strong>📱 Telefone:</strong> ${contact.phone}</p>
+                    ${contact.company ? `<p><strong>🏢 Empresa:</strong> ${contact.company}</p>` : ''}
+                    ${contact.notes ? `<p><strong>📝 Observações:</strong> ${contact.notes}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Alternar telas
+        function showAppScreen() {
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('app-screen').classList.add('active');
+        }
+
+        function showAuthScreen() {
+            document.getElementById('app-screen').classList.remove('active');
+            document.getElementById('auth-screen').classList.add('active');
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('token');
+            authToken = null;
+            currentUser = null;
+            showAuthScreen();
+            document.getElementById('contactsList').innerHTML = '';
+        }
+
+        // Mostrar mensagens
+        function showMessage(text, type) {
+            console.log('Mostrando mensagem:', text, type);
+            
+            const existing = document.querySelector('.message');
+            if (existing) existing.remove();
+            
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.style.display = 'block';
+            message.style.fontSize = '14px';
+            message.style.fontWeight = 'bold';
+            
+            const content = document.querySelector('.content');
+            content.insertBefore(message, content.firstChild);
+            
+            // Remove a mensagem após 8 segundos (tempo maior para debug)
+            setTimeout(() => {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 8000);
+        }
+    </script>
+</body>
+</html>

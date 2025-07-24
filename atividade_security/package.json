@@ -1,0 +1,47 @@
+{
+  "name": "atividade_security",
+  "version": "1.0.0",
+  "description": "Sistema de cadastro seguro com criptografia híbrida",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:create": "psql -h localhost -U postgres -c \"CREATE DATABASE security_app;\"",
+    "db:setup": "psql -h localhost -U postgres -d security_app -f sql/create_tables.sql"
+  },
+  "keywords": [
+    "security",
+    "encryption",
+    "nodejs",
+    "typescript",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.0",
+    "express": "^4.19.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-rsa": "^1.1.1",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/crypto-js": "^4.2.2",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.1.0",
+    "@types/node-rsa": "^1.1.4",
+    "@types/pg": "^8.15.4",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cadastro Seguro</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- Removendo dependências externas temporariamente para teste -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+    </div>
+
+    <!-- Login/Register Screen -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>🔐 Sistema Seguro</h1>
+                <p>Gerenciamento seguro de contatos com criptografia</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form active">
+                <h2>Entrar</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Usuário:</label>
+                        <input type="text" id="loginUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Senha:</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        🔑 Entrar
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Não tem conta? <a href="#" onclick="switchToRegister()">Cadastre-se</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="auth-form">
+                <h2>Cadastrar</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerUsername">Usuário:</label>
+                        <input type="text" id="registerUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email:</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerFullName">Nome Completo:</label>
+                        <input type="text" id="registerFullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Senha:</label>
+                        <input type="password" id="registerPassword" name="password" required minlength="8">
+                        <small>Mínimo 8 caracteres</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        ✨ Cadastrar
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Já tem conta? <a href="#" onclick="switchToLogin()">Entre aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-screen" class="screen">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-address-book"></i> Meus Contatos</h1>
+                <div class="user-info">
+                    <span id="userGreeting">Olá, <span id="userName"></span>!</span>
+                    <button onclick="logout()" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Controls -->
+            <div class="controls">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Buscar contatos...">
+                    <button onclick="searchContacts()" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button onclick="showAddContactModal()" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Novo Contato
+                </button>
+            </div>
+
+            <!-- Contacts List -->
+            <div class="contacts-section">
+                <div class="contacts-header">
+                    <h2>Contatos</h2>
+                    <div class="stats">
+                        <span id="contactsCount">0 contatos</span>
+                    </div>
+                </div>
+                <div id="contactsList" class="contacts-list">
+                    <!-- Contacts will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Novo Contato</h3>
+                <button onclick="closeContactModal()" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">Nome *:</label>
+                    <input type="text" id="contactName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">Email:</label>
+                    <input type="email" id="contactEmail" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">Telefone:</label>
+                    <input type="tel" id="contactPhone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="contactAddress">Endereço:</label>
+                    <textarea id="contactAddress" name="address" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contactNotes">Observações:</label>
+                    <textarea id="contactNotes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeContactModal()" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Removendo CDNs externas temporariamente -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-rsa/1.1.1/NodeRSA.min.js"></script> -->
+    <script src="scripts/init.js"></script>
+</body>
+</html>
