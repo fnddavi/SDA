@@ -4,8 +4,8 @@ import { authenticateToken, rateLimitByIP, auditLog } from '../middleware/auth';
 
 const router = Router();
 
-// Rate limiting mais restritivo para autenticação
-const authRateLimit = rateLimitByIP(20, 15); // 20 tentativas por 15 minutos
+// Rate limiting mais permissivo para desenvolvimento
+const authRateLimit = rateLimitByIP(200, 15); // 200 tentativas por 15 minutos
 
 // Rotas públicas (sem autenticação)
 router.post('/register', 
